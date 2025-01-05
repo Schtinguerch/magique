@@ -1,22 +1,19 @@
 from typing import List, Callable
-from multipledispatch import dispatch
 from .when_condition import WhenCondition
 from .observable import Observable
 
 
-@dispatch(Observable, Callable[[], bool], Callable)
-def when(observable: Observable, condition: Callable[[], bool], target_function: Callable) -> WhenCondition:
-    return WhenCondition([observable], [condition], [target_function])
+def when(observables: Observable | List[Observable],
+         conditions: Callable[[], bool] | List[Callable[[], bool]],
+         target_function: Callable | List[Callable]) -> WhenCondition:
 
+    if isinstance(observables, Observable):
+        observables = [observables]
 
-@dispatch(List[Observable], Callable[[], bool], Callable)
-def when(observables: List[Observable], condition: Callable[[], bool], target_function: Callable) -> WhenCondition:
-    return WhenCondition(observables, [condition], [target_function])
+    if isinstance(conditions, Callable):
+        conditions = [conditions]
 
+    elif isinstance(target_function, Callable):
+        target_function = [target_function]
 
-@dispatch(List[Observable], List[Callable[[], bool]], List[Callable])
-def when(
-        observables: List[Observable],
-        conditions: List[Callable[[], bool]],
-        target_functions: List[Callable]) -> WhenCondition:
-    return WhenCondition(observables, conditions, target_functions)
+    return WhenCondition(observables, conditions, target_function)
