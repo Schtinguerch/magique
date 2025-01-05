@@ -5,7 +5,7 @@ from .observable import Observable
 T = TypeVar('T')
 
 
-class ObservableList(Observable, Generic[T]):
+class ObservableList(Observable[List], Generic[T]):
     def __init__(self, initial_list: List[T] | None = None):
         self._target_list: List[T] = initial_list or []
         super().__init__(initial_value=self._target_list)
