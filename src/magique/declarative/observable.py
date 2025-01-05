@@ -5,7 +5,7 @@ T = TypeVar('T')
 
 
 class Observable(Generic[T]):
-    def __init__(self, initial_value: T):
+    def __init__(self, initial_value: T | None = None):
         self._value = initial_value
         self._observers: List[Callable[[T], Any]] = []
 
@@ -20,6 +20,9 @@ class Observable(Generic[T]):
 
         self._value = new_value
         self.raise_update_event()
+
+    def no_event_set_value(self, new_value: T):
+        self._value = new_value
 
     def attach_on_update(self, callback: Callable[[T], Any]) -> None:
         self._observers.append(callback)
