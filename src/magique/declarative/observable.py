@@ -39,3 +39,7 @@ class Observable(Generic[T]):
     def raise_update_event(self) -> None:
         for observer_func in self._observers:
             observer_func(self._value)
+
+
+def obs(initial_value: T) -> Observable[T]:
+    return Observable(initial_value)

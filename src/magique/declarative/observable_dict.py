@@ -1,4 +1,4 @@
-from typing import TypeVar, Generic, Dict
+from typing import TypeVar, Generic, Dict, Callable
 from .observable import Observable
 
 
@@ -7,8 +7,14 @@ V = TypeVar("V")
 
 
 class ObservableDict(Observable, Generic[K, V]):
-    def __init__(self, initial_dict: Dict | None = None):
-        self._target_dict = initial_dict or {}
+    def __init__(self, initial_dict: Dict | zip | None = None):
+        if initial_dict is None:
+            self._target_dict = {}
+        elif isinstance(initial_dict, zip):
+            self._target_dict = dict(initial_dict)
+        else:
+            self._target_dict = initial_dict
+
         super().__init__(initial_value=self._target_dict)
 
     def __setitem__(self, key: K, value: V):
@@ -35,3 +41,10 @@ class ObservableDict(Observable, Generic[K, V]):
 
     def __repr__(self) -> str:
         return repr(self._value)
+
+
+def od(initial_dict: Dict | zip | None = None) -> ObservableDict:
+    return ObservableDict(initial_dict)
+
+
+odict: Callable[[Dict | zip | None], ObservableDict] = od

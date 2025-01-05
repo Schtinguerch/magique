@@ -1,4 +1,4 @@
-from typing import List, TypeVar, Generic
+from typing import List, TypeVar, Generic, Iterable, Callable
 from .observable import Observable
 
 
@@ -6,8 +6,14 @@ T = TypeVar('T')
 
 
 class ObservableList(Observable[List], Generic[T]):
-    def __init__(self, initial_list: List[T] | None = None):
-        self._target_list: List[T] = initial_list or []
+    def __init__(self, initial_iterable: Iterable[T] | None = None):
+        if initial_iterable is None:
+            self._target_list = []
+        elif isinstance(initial_iterable, list):
+            self._target_list = initial_iterable
+        else:
+            self._target_list = list(initial_iterable)
+
         super().__init__(initial_value=self._target_list)
 
     def append(self, item: T):
@@ -39,3 +45,10 @@ class ObservableList(Observable[List], Generic[T]):
 
     def __repr__(self):
         return repr(self._value)
+
+
+def ol(initial_iterable: Iterable[T] | None = None) -> ObservableList[T]:
+    return ObservableList(initial_iterable)
+
+
+olist: Callable[[Iterable[T]], ObservableList[T]] = ol
