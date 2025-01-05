@@ -24,3 +24,6 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/Schtinguerch/magique"
 Issues = "https://github.com/Schtinguerch/magique/issues"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
