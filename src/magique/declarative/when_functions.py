@@ -1,11 +1,11 @@
-from typing import List, Callable
+from typing import Iterable, Callable
 from .when_condition import WhenCondition
 from .observable import Observable
 
 
-def when(observables: Observable | List[Observable],
-         conditions: Callable[[], bool] | List[Callable[[], bool]],
-         target_function: Callable | List[Callable]) -> WhenCondition:
+def when(observables: Observable | Iterable[Observable],
+         conditions: Callable[[], bool] | Iterable[Callable[[], bool]],
+         target_function: Callable | Iterable[Callable]) -> WhenCondition:
 
     if isinstance(observables, Observable):
         observables = [observables]
