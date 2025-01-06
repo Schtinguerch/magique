@@ -18,7 +18,8 @@ classifiers = [
 ]
 dependencies = [
     "pyautogui",
-    "multipledispatch"
+    "multipledispatch",
+    "keyboard"
 ]
 
 [project.urls]
