@@ -1,24 +1,24 @@
-from typing import Final
-from .key import MagiqueKey, CrossPlatformKey
+from typing import Final, List, Dict
+from .key import MagiqueKey, CrossPlatformKey, AnyKey, OneOfKeys
 
 
-LeftCtrl: Final[MagiqueKey] = MagiqueKey("lctrl", "left ctrl")
+LeftCtrl: Final[MagiqueKey] = MagiqueKey("ctrl", "ctrl")
 RightCtrl: Final[MagiqueKey] = MagiqueKey("rctrl", "right ctrl")
-Ctrl: Final[MagiqueKey] = LeftCtrl
+Ctrl: Final[MagiqueKey] = OneOfKeys(LeftCtrl, RightCtrl)
 
 Control: Final[MagiqueKey] = MagiqueKey("ctrl", "ctrl")
 Command: Final[MagiqueKey] = MagiqueKey("command", "command")
 Option: Final[MagiqueKey] = MagiqueKey("option", "alt")
 
-LeftShift: Final[MagiqueKey] = MagiqueKey("lshift", "left shift")
+LeftShift: Final[MagiqueKey] = MagiqueKey("shift", "shift")
 RightShift: Final[MagiqueKey] = MagiqueKey("rshift", "right shift")
-Shift: Final[MagiqueKey] = LeftShift
+Shift: Final[MagiqueKey] = OneOfKeys(LeftShift, RightShift)
 
-LeftWin: Final[MagiqueKey] = MagiqueKey("lwin", "left windows")
+LeftWin: Final[MagiqueKey] = MagiqueKey("win", "windows")
 RightWin: Final[MagiqueKey] = MagiqueKey("rwin", "right windows")
 Win: Final[MagiqueKey] = LeftWin
 
-LeftAlt: Final[MagiqueKey] = MagiqueKey("alt", "left alt")
+LeftAlt: Final[MagiqueKey] = MagiqueKey("alt", "alt")
 RightAlt: Final[MagiqueKey] = MagiqueKey("altright", "alt gr")
 Alt: Final[MagiqueKey] = LeftAlt
 AltGr: Final[MagiqueKey] = RightAlt
@@ -32,6 +32,7 @@ Return: Final[MagiqueKey] = Enter
 Tab: Final[MagiqueKey] = MagiqueKey("tab", "tab")
 Backspace: Final[MagiqueKey] = MagiqueKey("backspace", "backspace")
 Delete: Final[MagiqueKey] = MagiqueKey("delete", "delete")
+Del: Final[MagiqueKey] = Delete
 Escape: Final[MagiqueKey] = MagiqueKey("esc", "esc")
 Esc: Final[MagiqueKey] = Escape
 
@@ -155,6 +156,19 @@ Previous: Final[MagiqueKey] = MagiqueKey("prevtrack", "prior")
 Next: Final[MagiqueKey] = MagiqueKey("nexttrack", "next")
 
 
+ArrowLeft: Final[MagiqueKey] = MagiqueKey("left", "left")
+Left: Final[MagiqueKey] = ArrowLeft
+
+ArrowRight: Final[MagiqueKey] = MagiqueKey("right", "right")
+Right: Final[MagiqueKey] = ArrowRight
+
+ArrowUp: Final[MagiqueKey] = MagiqueKey("up", "up")
+Up: Final[MagiqueKey] = ArrowUp
+
+ArrowDown: Final[MagiqueKey] = MagiqueKey("down", "down")
+Down: Final[MagiqueKey] = ArrowDown
+
+
 #  MacOS equivalents for Win/Linux keys for cross-platform scripts
 #  Most of cross-platform apps supporting macOS, has that equivalent
 #  for keyboard hotkeys: Ctrl+A -> Command+A, Ctrl+Alt+X -> Command+Option+X
@@ -163,3 +177,45 @@ BackspaceOrDelete: Final[CrossPlatformKey] = CrossPlatformKey(Backspace, Delete)
 CtrlOrCommand: Final[CrossPlatformKey] = CrossPlatformKey(Ctrl, Command)
 AltOrOption: Final[CrossPlatformKey] = CrossPlatformKey(Alt, Option)
 AltGrOrOption: Final[CrossPlatformKey] = CrossPlatformKey(AltGr, Option)
+
+
+# For events when we don't need to bind the event to
+# a certain button (i.g. "Press any key to continue...")
+Any: Final[MagiqueKey] = AnyKey()
+
+all_keys: Final[List[MagiqueKey]] = [
+    LeftCtrl, RightCtrl,
+    LeftShift, RightShift, Shift,
+    LeftAlt, RightAlt, Alt, AltGr,
+    LeftWin, RightWin, Win,
+    Control, Command, Option,
+    CtrlOrCommand, AltOrOption, AltGrOrOption,
+    Backspace, BackspaceOrDelete,
+    CapsLock, Caps, Tab,
+    Escape, Esc,
+    Enter, Return,
+    Space,
+    Delete, Del,
+    Home, End,
+    PageUp, PgUp,
+    PageDown, PgDn,
+    Insert, Ins,
+    PrintScreen, PrtSc,
+    Tilde, Grave, D0, D1, D2, D3, D4, D5, D6, D7, D8, D9, Minus, Equal,
+    Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine,
+    Q, W, E, R, T, Y, U, I, O, P, BraceLeft, BracketLeft, BraceRight, BracketRight, Backslash,
+    A, S, D, F, G, H, J, K, L, Semicolon, Apostrophe,
+    Z, X, C, V, B, N, M, Comma, Period, Slash,
+    NumLock, ScrollLock,
+    PlayPause, Previous, Next,
+    ArrowLeft, Left,
+    ArrowRight, Right,
+    ArrowUp, Up,
+    ArrowDown, Down
+]
+
+
+str_key_dict: Dict[str, MagiqueKey] = {}
+for key in all_keys:
+    if key.canonical_string in str_key_dict: continue
+    str_key_dict[key.canonical_string] = key
