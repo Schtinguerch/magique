@@ -6,7 +6,7 @@ K = TypeVar("K")
 V = TypeVar("V")
 
 
-class ObservableDict(Observable, Generic[K, V]):
+class ObservableDict(Observable[Dict], Generic[K, V]):
     def __init__(self, initial_dict: Dict | zip | None = None):
         if initial_dict is None:
             self._target_dict = {}

@@ -1,11 +1,13 @@
+from .notify_updated import NotifyUpdated
 from typing import Callable, List, TypeVar, Generic, Any
 
 
 T = TypeVar('T')
 
 
-class Observable(Generic[T]):
+class Observable(Generic[T], NotifyUpdated):
     def __init__(self, initial_value: T | None = None):
+        super().__init__()
         self._value = initial_value
         self._observers: List[Callable[[T], Any]] = []
 
