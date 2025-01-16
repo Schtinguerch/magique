@@ -1,3 +1,4 @@
+from .notify_updated import NotifyUpdated
 from .observable import Observable, obs
 from .observable_list import ObservableList, olist, ol
 from .observable_dict import ObservableDict, odict, od

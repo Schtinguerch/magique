@@ -1,19 +1,20 @@
 from typing import Iterable, Callable
 from .when_condition import WhenCondition
-from .observable import Observable
+from .notify_updated import NotifyUpdated
 
 
-def when(observables: Observable | Iterable[Observable],
+def when(observables: NotifyUpdated | Iterable[NotifyUpdated],
          conditions: Callable[[], bool] | Iterable[Callable[[], bool]],
-         target_function: Callable | Iterable[Callable]) -> WhenCondition:
+         target_functions: Callable | Iterable[Callable],
+         max_activation_count: int | None = None) -> WhenCondition:
 
-    if isinstance(observables, Observable):
+    if isinstance(observables, NotifyUpdated):
         observables = [observables]
 
     if isinstance(conditions, Callable):
         conditions = [conditions]
 
-    elif isinstance(target_function, Callable):
-        target_function = [target_function]
+    if isinstance(target_functions, Callable):
+        target_functions = [target_functions]
 
-    return WhenCondition(observables, conditions, target_function)
+    return WhenCondition(observables, conditions, target_functions, max_activation_count)
