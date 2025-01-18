@@ -75,6 +75,20 @@ class TestUpdateHandlers:
         assert target_list == [True, True, True]
         assert observable_list.value == list(range(1, 5)) + list(range(6, 9))
 
+    def test_list_update_on_delete(
+            self,
+            observable_list: ObservableList,
+            target_list: List,
+            list_adds_true_on_update,
+            initialize_list_by_numbers):
+
+        del observable_list[9]
+        del observable_list[5]
+        del observable_list[0]
+
+        assert target_list == [True, True, True]
+        assert observable_list.value == list(range(1, 5)) + list(range(6, 9))
+
     def test_list_update_on_extend(
             self,
             observable_list: ObservableList,
