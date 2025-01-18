@@ -40,6 +40,10 @@ class ObservableList(Observable[List], Generic[T]):
         self._value[index] = value
         self.raise_update_event()
 
+    def __delitem__(self, index):
+        del self._value[index]
+        self.raise_update_event()
+
     def __len__(self):
         return len(self._value)
 
