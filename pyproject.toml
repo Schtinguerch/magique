@@ -18,7 +18,6 @@ classifiers = [
 ]
 dependencies = [
     "pyautogui",
-    "multipledispatch",
     "keyboard"
 ]
 
