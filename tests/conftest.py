@@ -1,6 +1,6 @@
 import pytest
-from typing import List, Callable, Any
-from src.magique.declarative import Observable, ObservableList
+from typing import List, Callable, Any, Dict
+from src.magique.declarative import Observable, ObservableList, ObservableDict
 
 
 @pytest.fixture()
@@ -35,8 +35,24 @@ def list_adds_true_on_update(
 
 
 @pytest.fixture()
+def list_adds_true_on_dict_update(
+        observable_dict: ObservableDict,
+        append_true_to_target_list) -> ObservableDict:
+
+    observable_dict.attach_on_update(append_true_to_target_list)
+    return observable_dict
+
+
+@pytest.fixture()
 def observable_list() -> ObservableList:
     observable = ObservableList()
+    yield observable
+    observable.detach_all_handlers()
+
+
+@pytest.fixture()
+def observable_dict() -> ObservableDict:
+    observable = ObservableDict()
     yield observable
     observable.detach_all_handlers()
 
@@ -45,3 +61,9 @@ def observable_list() -> ObservableList:
 def initialize_list_by_numbers(observable_list: ObservableList) -> None:
     numbers: List[int] = list(range(0, 10))
     observable_list.no_event_set_value(numbers)
+
+
+@pytest.fixture()
+def initialize_dict_by_numbers(observable_dict: ObservableDict) -> None:
+    numbers: Dict[str, int] = {str(i): i for i in range(0, 10)}
+    observable_dict.no_event_set_value(numbers)
