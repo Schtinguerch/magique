@@ -1,7 +1,8 @@
-import pyautogui
+from ....magique.declarative import NotifyUpdated
+from buttons import *
 import mouse
 
 
-class MagiqueMouse:
+class MagiqueMouse(NotifyUpdated):
     def __init__(self):
-        mouse.is_pressed()
+        super().__init__()
