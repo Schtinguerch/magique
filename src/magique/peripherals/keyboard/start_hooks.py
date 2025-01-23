@@ -12,7 +12,7 @@ def on_any_key(event: KeyboardEvent) -> None:
 
     if event.name in str_key_dict:
         key: MagiqueKey = str_key_dict[event.name]
-        str_key_dict[event.name].raise_update_event()
+        key.raise_update_event()
 
         if key in OneOfKeys.redirect_dict:
             for dir_key in OneOfKeys.redirect_dict[key]:
