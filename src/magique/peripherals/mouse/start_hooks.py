@@ -1,10 +1,12 @@
 from typing import List, Literal
-from . import MagiqueMouseButton, OneOfMouseButtons, str_button_dict, Any
+from . import MagiqueMouseButton, OneOfMouseButtons, str_button_dict, Any, Cursor
+from ..monitors import monitor_setup, auto_init_monitor_setup, MonitorInfo, MonitorSetup
 
 from mouse import hook, ButtonEvent, MoveEvent, WheelEvent
 
 
 now_pressed_buttons: List[MagiqueMouseButton] = []
+auto_init_monitor_setup()
 
 
 def on_button_event(event: ButtonEvent):
@@ -23,8 +25,11 @@ def on_button_event(event: ButtonEvent):
 
 
 def on_move_event(event: MoveEvent):
-    #raise NotImplementedError()
-    pass
+    Cursor.x = event.x
+    Cursor.y = event.y
+
+    monitor_screen_is_on: MonitorInfo = monitor_setup.get_monitor_cursor_is_on(Cursor.x, Cursor.y)
+    Cursor.monitor_id = monitor_setup.monitors.value.index(monitor_screen_is_on) + 1
 
 
 def on_wheel_event(event: WheelEvent):

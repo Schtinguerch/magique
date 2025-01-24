@@ -1,7 +1,7 @@
 from screeninfo import Monitor
 from typing import List, Final
 
-from ....magique.declarative import NotifyUpdated, ObservableList
+from ....magique.declarative import NotifyUpdated, ObservableList, notify_property_updated
 
 
 class MonitorInfo(NotifyUpdated):
@@ -12,41 +12,38 @@ class MonitorInfo(NotifyUpdated):
         self._width: int = info.width
         self._height: int = info.height
 
+    def is_cursor_inside(self, position_x: int, position_y: int) -> bool:
+        inside_x: bool = self.x <= position_x < self.x + self.width
+        inside_y: bool = self.y <= position_y < self.y + self.height
+        return inside_x and inside_y
+
     @property
     def x(self) -> int: return self._x
 
     @x.setter
-    def x(self, new_x: int):
-        old_x: int = self._x
-        self._x = new_x
-        self.raise_update_if_values_diff(old_x, new_x)
+    @notify_property_updated(lambda self: self._x)
+    def x(self, new_x: int): self._x = new_x
 
     @property
     def y(self) -> int: return self._y
 
     @y.setter
-    def y(self, new_y: int):
-        old_y: int = self._y
-        self._y = new_y
-        self.raise_update_if_values_diff(old_y, new_y)
+    @notify_property_updated(lambda self: self._y)
+    def y(self, new_y: int): self._y = new_y
 
     @property
     def width(self) -> int: return self._width
 
     @width.setter
-    def width(self, new_width: int):
-        old_width: int = self._width
-        self._width = new_width
-        self.raise_update_if_values_diff(old_width, new_width)
+    @notify_property_updated(lambda self: self._width)
+    def width(self, new_width: int): self._width = new_width
 
     @property
     def height(self) -> int: return self._height
 
     @height.setter
-    def height(self, new_height: int):
-        old_height: int = self._height
-        self._height = new_height
-        self.raise_update_if_values_diff(old_height, new_height)
+    @notify_property_updated(lambda self: self._height)
+    def height(self, new_height: int): self._height = new_height
 
 
 class MonitorSetup(NotifyUpdated):
@@ -67,6 +64,13 @@ class MonitorSetup(NotifyUpdated):
 
         monitors_info = [MonitorInfo(m) for m in monitors]
         self.monitors.no_event_set_value(monitors_info)
+
+    def get_monitor_cursor_is_on(self, x: int, y: int) -> MonitorInfo:
+        for monitor in self.monitors.value:
+            if monitor.is_cursor_inside(x, y):
+                return monitor
+
+        return self.monitors[0]
 
     def detach_all_handlers(self) -> None:
         super().detach_all_handlers()
