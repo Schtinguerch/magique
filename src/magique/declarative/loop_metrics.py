@@ -87,6 +87,6 @@ class LoopMetrics(Observable[T]):
 def loop_obs(
         metrics_iteration_function: Callable[[], T] | None = None,
         initial_value: T | None = None,
-        loop_delay_seconds: float = 0.) -> LoopMetrics:
+        loop_delay_seconds: float = 0.5) -> LoopMetrics:
 
     return LoopMetrics(metrics_iteration_function, initial_value, loop_delay_seconds)
