@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "magique"
-version = "0.0.2"
+version = "0.0.3"
 authors = [
   { name="Schtinguêrch", email="schtinguerch@gmail.com" },
 ]
@@ -18,7 +18,9 @@ classifiers = [
 ]
 dependencies = [
     "pyautogui",
-    "keyboard"
+    "keyboard",
+    "mouse",
+    "screeninfo"
 ]
 
 [project.urls]
