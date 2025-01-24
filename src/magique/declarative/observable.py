@@ -35,9 +35,6 @@ class Observable(Generic[T], NotifyUpdated):
             return True
         return False
 
-    def detach_all_handlers(self) -> None:
-        self._observers.clear()
-
     def raise_update_event(self) -> None:
         for observer_func in self._observers:
             observer_func(self._value)
