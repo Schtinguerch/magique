@@ -17,4 +17,4 @@ def when(observables: NotifyUpdated | Iterable[NotifyUpdated],
     if isinstance(target_functions, Callable):
         target_functions = [target_functions]
 
-    return WhenCondition(observables, conditions, target_functions, max_activation_count)
+    return WhenCondition(observables, conditions, target_functions, max_activation_count=max_activation_count)

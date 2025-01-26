@@ -34,11 +34,16 @@ class WhenCondition:
         if not self.is_active:
             return
 
+        if (self.max_activation_count is not None) and self.done_activations >= self.max_activation_count:
+            return
+
         if self.all_conditions_to_be_true:
             if all(condition() for condition in self.conditions):
+                self.done_activations += 1
                 self.execute_all_handlers()
 
         elif any(condition() for condition in self.conditions):
+            self.done_activations += 1
             self.execute_all_handlers()
 
     def execute_all_handlers(self):
