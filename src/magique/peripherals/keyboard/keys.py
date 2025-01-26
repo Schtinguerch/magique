@@ -183,6 +183,20 @@ AltGrOrOption: Final[CrossPlatformKey] = CrossPlatformKey(AltGr, Option)
 # a certain button (i.g. "Press any key to continue...")
 Any: Final[MagiqueKey] = AnyKey()
 
+letter_keys: Final[List[MagiqueKey]] = [
+    A, B, C, D, E, F, G, H, I, J, K, L, M,
+    N, O, P, Q, R, S, T, U, V, W, X, Y, Z
+]
+
+f_keys: Final[List[MagiqueKey]] = [
+    F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
+    F13, F14, F15, F16, F17, F18, F19, F20, F21, F22, F23, F24
+]
+
+digit_keys: Final[List[MagiqueKey]] = [D0, D1, D2, D3, D4, D5, D6, D7, D8, D9]
+arrow_keys: Final[List[MagiqueKey]] = [Left, Right, Up, Down]
+navigation_keys: Final[List[MagiqueKey]] = [Home, PageUp, PageDown, End]
+
 all_keys: Final[List[MagiqueKey]] = [
     LeftCtrl, RightCtrl,
     LeftShift, RightShift, Shift,
