@@ -6,6 +6,12 @@ T = TypeVar('T')
 
 
 class Observable(Generic[T], NotifyUpdated):
+    """
+    A container inherited from ``NotifyUpdated`` with the ``value``
+    property, which  invoked ``raise_update_event()`` when the
+    ``value`` property is updated by new different value
+    """
+
     def __init__(self, initial_value: T | None = None):
         super().__init__()
         self._value = initial_value
@@ -24,21 +30,30 @@ class Observable(Generic[T], NotifyUpdated):
         self.raise_update_event()
 
     def no_event_set_value(self, new_value: T):
+        """
+        The way to update Observable's value without
+        ``raise_update_event()`` invokation
+        """
+
         self._value = new_value
 
-    def attach_on_update(self, callback: Callable[[T], Any]) -> None:
-        self._observers.append(callback)
-
-    def detach_on_update(self, callback: Callable[[T], Any]) -> bool:
-        if callback in self._observers:
-            self._observers.remove(callback)
-            return True
-        return False
-
     def raise_update_event(self) -> None:
+        """
+        Raises the whole object update event, invoking subscribed functions.
+        Supports to be invoked manually
+
+        The containing ``value`` is passed to every invoked handler, instead
+        of the class instance like ``NotifyUpdated`` instances
+        """
+
         for observer_func in self._observers:
             observer_func(self._value)
 
 
-def obs(initial_value: T) -> Observable[T]:
+def obs(initial_value: T | None = None) -> Observable[T]:
+    """
+    Creates a new instance of ``Observable[T]`` object
+    :param initial_value: start value to be stored
+    """
+
     return Observable(initial_value)

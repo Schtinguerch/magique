@@ -3,6 +3,18 @@ from .notify_updated import NotifyUpdated
 
 
 class WhenCondition:
+    """
+    The class responsible for catching ``NotifyUpdated`` events
+    to start specified condition checking
+
+    If conditions satisfied, specified functions are invoked
+        1. ``observables`` - the collection of ``NotifyUpdated`` which updates are triggers to start conditions checking
+        2. ``conditions`` - the collection of ``func() -> bool`` with some checks, True = condition is satisfied
+        3. ``handlers`` - the collection of ``func()`` with some behavior if conditions are satisfied
+        4. ``all_conditions_to_be_true`` True - need all conditions return True, False - at least one returns True
+        5. ``max_activation_count`` - max count of ``handlers`` invokation if conditions are satisfied
+    """
+
     def __init__(
             self,
             observables: Iterable[NotifyUpdated],
@@ -23,14 +35,31 @@ class WhenCondition:
             observable.attach_on_update(self.observables_handler)
 
     def add_observable(self, observable: NotifyUpdated):
+        """
+        Appends an ``NotifyUpdated`` instance as a trigger to start
+        conditions checking
+        """
+
         self.observables.append(observable)
         observable.attach_on_update(self.observables_handler)
 
     def remove_observable(self, observable: NotifyUpdated):
+        """
+        Removes the ``NotifyUpdated`` instance from list of
+        check triggers
+        """
+
         self.observables.remove(observable)
         observable.detach_on_update(self.observables_handler)
 
     def observables_handler(self, placeholder: Any = 0):
+        """
+        Service method is subscribed to all using ``NotifyUpdated``  updates
+
+        Checks ``is_active`` state and activation count limits, before
+        handlers invokation
+        """
+
         if not self.is_active:
             return
 
@@ -47,5 +76,10 @@ class WhenCondition:
             self.execute_all_handlers()
 
     def execute_all_handlers(self):
+        """
+        A manual way to invoke all handlers without
+        checking ``is_active`` and activation limits
+        """
+
         for handler in self.handlers:
             handler()

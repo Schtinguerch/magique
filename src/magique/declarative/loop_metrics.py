@@ -10,6 +10,22 @@ T = TypeVar('T')
 
 
 class LoopMetrics(Observable[T]):
+    """
+    The class invoking specified function in loop
+    by specified delay (default delay = 0.5s)
+
+    When specified function calculated value different
+    to previous calculated value, the ``raise_update_event()``
+    is invoked from that class instance
+
+    You can create your custom class inherited from LoopMetrics
+    and override the method ``metrics_iteration()``.
+
+    If you want save the in-coded function, in __init__,
+    you can set ``metrics_iteration_function`` value = None, calling
+    ``super().__init__(initial_value, initial_value=None, *triggers)``
+    """
+
     lock = Lock()
 
     def __init__(
@@ -37,6 +53,16 @@ class LoopMetrics(Observable[T]):
         return listening_thread, handling_thread
 
     def start_metrics_loop(self) -> None:
+        """
+        Enables using metrics, starting two threads with loops
+        if the method wasn't used before, listening is/was stopped
+
+        The 1st loop is reading ``metrics_iteration_function`` value and passing to the queue
+
+        The 2nd loop is reading the value queue and invoking ``raise_update_event`` if last
+        calculated value is different to previous value
+        """
+
         self.lock.acquire()
         if self.listening:
             self.lock.release()
@@ -51,6 +77,10 @@ class LoopMetrics(Observable[T]):
             self.lock.release()
 
     def stop_metrics_loop(self) -> None:
+        """
+        Stops using metrics, stopping running loops if listening is enabled
+        """
+
         self.lock.acquire()
 
         if not self.listening:
@@ -65,6 +95,11 @@ class LoopMetrics(Observable[T]):
         self.lock.release()
 
     def listen_updates(self) -> None:
+        """
+        Loop No.1 - get values from ``metrics_iteration_function`` by delay
+        and passing values to the queue
+        """
+
         while True:
             if not self.listening: break
             time.sleep(self.loop_delay_seconds)
@@ -73,6 +108,13 @@ class LoopMetrics(Observable[T]):
             self.updates_queue.put(new_value)
 
     def handle_updates(self) -> None:
+        """
+        Loop No.2 - get values queue, populated from Loop No.1
+        and passing that into ``self.value`` property. The property
+        invokes ``raise_update_event`` if new value is different to
+        the previous value
+        """
+
         while True:
             if not self.listening: break
             if self.updates_queue.empty(): continue
@@ -81,6 +123,12 @@ class LoopMetrics(Observable[T]):
             self.updates_queue.task_done()
 
     def metrics_iteration(self) -> T:
+        """
+        By default, it's empty function, but you can
+        override it in your own child class
+        :return: A value calculated by the function, update of that
+        you want to catch and create according event
+        """
         pass
 
 
@@ -88,5 +136,12 @@ def loop_obs(
         metrics_iteration_function: Callable[[], T] | None = None,
         initial_value: T | None = None,
         loop_delay_seconds: float = 0.5) -> LoopMetrics:
+    """
+    Creates an instance of LoopMetrics class
+    :param metrics_iteration_function: calculator of new metrics value
+    :param initial_value: start value to be initialized
+    :param loop_delay_seconds: the time to wait in loop before invoke
+    the ``metrics_iteration_function``. By default, equals 0.5s
+    """
 
     return LoopMetrics(metrics_iteration_function, initial_value, loop_delay_seconds)

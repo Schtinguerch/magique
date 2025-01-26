@@ -1,3 +1,12 @@
+"""
+This module contains classes and functions for
+reactive programming, creating hooks, etc.
+
+Most of builtin components in magique is
+based on following classes
+"""
+
+
 from .notify_updated import NotifyUpdated, notify_property_updated
 from .observable import Observable, obs
 from .observable_list import ObservableList, olist, ol
