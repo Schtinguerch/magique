@@ -1,3 +1,5 @@
+![magique banner](docs/assets/banner.png)
+
 # magique.py
 
 That's my expirement, being in development from my personal programming language called MagiqueScript
