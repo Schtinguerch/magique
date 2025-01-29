@@ -41,6 +41,18 @@ class ObservableList(Observable[List], Generic[T]):
         self._value.remove(item)
         self.raise_update_event()
 
+    def remove_many(self, items: Iterable[T]):
+        """
+        Performs multiply ``remove()`` operations, but with
+        single ``raise_update_event``, because it's recognized
+        as single operation
+        """
+
+        for item in items:
+            self._value.remove(item)
+
+        self.raise_update_event()
+
     def clear(self):
         """ Removes all items from list """
 
