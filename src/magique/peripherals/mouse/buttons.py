@@ -8,13 +8,13 @@ Cursor: Final[MagiqueCursor] = MagiqueCursor()
 Left: Final[MagiqueMouseButton] = MagiqueMouseButton("left")
 Right: Final[MagiqueMouseButton] = MagiqueMouseButton("right")
 Middle: Final[MagiqueMouseButton] = MagiqueMouseButton("middle")
-Wheel: Final[MagiqueMouseButton] = MagiqueMouseButton("wheel")
+WheelButton: Final[MagiqueMouseButton] = MagiqueMouseButton("wheel")
 
 LeftOrRight: Final[OneOfMouseButtons] = OneOfMouseButtons(Left, Right)
-MiddleOrWheel: Final[OneOfMouseButtons] = OneOfMouseButtons(Middle, Wheel)
+MiddleOrWheel: Final[OneOfMouseButtons] = OneOfMouseButtons(Middle, WheelButton)
 
 Any: Final[AnyMouseButton] = AnyMouseButton()
-all_buttons: Final[List[MagiqueMouseButton]] = [Left, Right, Middle, Wheel]
+all_buttons: Final[List[MagiqueMouseButton]] = [Left, Right, Middle, WheelButton]
 
 str_button_dict: Dict[str, MagiqueMouseButton] = {}
 for button in all_buttons:
