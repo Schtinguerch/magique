@@ -1,7 +1,7 @@
 import time
 
 from .observable import Observable
-from typing import Callable, TypeVar, Tuple
+from typing import Callable, TypeVar, Tuple, Any
 from threading import Thread, Lock
 from queue import Queue
 
@@ -24,6 +24,12 @@ class LoopMetrics(Observable[T]):
     If you want save the in-coded function, in __init__,
     you can set ``metrics_iteration_function`` value = None, calling
     ``super().__init__(initial_value, initial_value=None, *triggers)``
+
+    By default, if in value queue value = None is found, the handling
+    thread stops its working. If you need to avoid metrics stopping
+    when your ``metrics_iteration_function`` returns None, you
+    need to set ``self.terminate_queue_value`` = your new value,
+    which the metrics function will return never
     """
 
     lock = Lock()
@@ -39,6 +45,7 @@ class LoopMetrics(Observable[T]):
         self.listening: bool = False
         self.loop_delay_seconds: float = loop_delay_seconds
         self.listening_thread, self.handling_thread = self.reinitialize_threads()
+        self.terminate_queue_value: Any = None
 
         if metrics_iteration_function is not None:
             self.metrics_iteration: Callable[[], T] = metrics_iteration_function
@@ -88,6 +95,8 @@ class LoopMetrics(Observable[T]):
             return
 
         self.listening = False
+        self.updates_queue.put(self.terminate_queue_value)
+
         self.listening_thread.join()
         self.handling_thread.join()
 
@@ -116,10 +125,12 @@ class LoopMetrics(Observable[T]):
         """
 
         while True:
-            if not self.listening: break
-            if self.updates_queue.empty(): continue
+            value = self.updates_queue.get()
+            if value == self.terminate_queue_value:
+                self.updates_queue.task_done()
+                break
 
-            self.value = self.updates_queue.get_nowait()
+            self.value = value
             self.updates_queue.task_done()
 
     def metrics_iteration(self) -> T:

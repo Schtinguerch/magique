@@ -19,4 +19,4 @@ def check_monitor_setup() -> None:
 
 
 monitor_checkout_loop = LoopMetrics(check_monitor_setup, loop_delay_seconds=1)
-#monitor_checkout_loop.start_metrics_loop()
+monitor_checkout_loop.start_metrics_loop()
