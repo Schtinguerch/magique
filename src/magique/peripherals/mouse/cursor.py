@@ -1,6 +1,6 @@
 from mouse import get_position
 
-from ....magique.declarative import NotifyUpdated, notify_property_updated
+from ...declarative import NotifyUpdated, notify_property_updated
 
 
 class MagiqueCursor(NotifyUpdated):

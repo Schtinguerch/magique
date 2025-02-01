@@ -1,4 +1,4 @@
-from ....magique.declarative import NotifyUpdated
+from ...declarative import NotifyUpdated
 from buttons import *
 import mouse
 

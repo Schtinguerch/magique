@@ -1,5 +1,5 @@
 from typing import Literal, Dict, Self, List, Tuple
-from ....magique.declarative import NotifyUpdated
+from ...declarative import NotifyUpdated
 import mouse
 
 

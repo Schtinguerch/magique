@@ -1,7 +1,7 @@
 from screeninfo import Monitor
 from typing import List, Final, Any
 
-from ....magique.declarative import NotifyUpdated, ObservableList, notify_property_updated
+from ...declarative import NotifyUpdated, ObservableList, notify_property_updated
 
 
 class MonitorInfo(NotifyUpdated):

@@ -2,7 +2,7 @@ from typing import Final, List
 from screeninfo import get_monitors, Monitor
 
 from .monitor_info import MonitorSetup, MonitorInfo
-from ....magique.declarative import LoopMetrics
+from ...declarative import LoopMetrics
 
 
 monitor_setup: Final[MonitorSetup] = MonitorSetup()
