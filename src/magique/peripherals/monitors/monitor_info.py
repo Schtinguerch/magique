@@ -74,6 +74,16 @@ class MonitorInfo(NotifyUpdated):
             and self.is_primary == other.is_primary
         )
 
+    def __repr__(self) -> str:
+        class_name: str = self.__class__.__name__
+        return (
+            f"<{class_name}: '{self.name}', primary={self.is_primary}, "
+            f"xy={self.x};{self.y}, resolution={self.width}x{self.height} >"
+        )
+
+    def __str__(self) -> str:
+        return self.__repr__()
+
 
 class MonitorSetup(NotifyUpdated):
     def __init__(self, monitors: List[Monitor] | None = None):
