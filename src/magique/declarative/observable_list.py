@@ -17,13 +17,13 @@ class ObservableList(Observable[List], Generic[T]):
 
     def __init__(self, initial_iterable: Iterable[T] | None = None):
         if initial_iterable is None:
-            self._target_list = []
+            self._initializer_list = []
         elif isinstance(initial_iterable, list):
-            self._target_list = initial_iterable
+            self._initializer_list = initial_iterable
         else:
-            self._target_list = list(initial_iterable)
+            self._initializer_list = list(initial_iterable)
 
-        super().__init__(initial_value=self._target_list)
+        super().__init__(initial_value=self._initializer_list)
 
     def append(self, item: T):
         """ Appends object to the end of the list """
@@ -78,10 +78,10 @@ class ObservableList(Observable[List], Generic[T]):
         self.raise_update_event()
 
     def __contains__(self, item: Any) -> bool:
-        return item in self._target_list
+        return item in self._value
 
     def __iter__(self) -> Iterator[T]:
-        return self._target_list.__iter__()
+        return self._value.__iter__()
 
     def __len__(self):
         return len(self._value)
