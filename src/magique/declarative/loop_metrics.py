@@ -38,7 +38,8 @@ class LoopMetrics(Observable[T]):
             self,
             metrics_iteration_function: Callable[[], T] | None = None,
             initial_value: T | None = None,
-            loop_delay_seconds: float = 0.5):
+            loop_delay_seconds: float = 0.5,
+            start_immediately: bool = False):
 
         super().__init__(initial_value)
         self.updates_queue: Queue[T] = Queue()
@@ -49,6 +50,9 @@ class LoopMetrics(Observable[T]):
 
         if metrics_iteration_function is not None:
             self.metrics_iteration: Callable[[], T] = metrics_iteration_function
+
+        if start_immediately:
+            self.start_metrics_loop()
 
     def reinitialize_threads(self) -> Tuple[Thread, Thread]:
         listening_thread = Thread(target=self.listen_updates)
@@ -142,17 +146,56 @@ class LoopMetrics(Observable[T]):
         """
         pass
 
+    def __call__(self) -> T:
+        return self.metrics_iteration()
+
 
 def loop_obs(
         metrics_iteration_function: Callable[[], T] | None = None,
         initial_value: T | None = None,
-        loop_delay_seconds: float = 0.5) -> LoopMetrics:
+        loop_delay_seconds: float = 0.5,
+        start_immediately: bool = False) -> LoopMetrics:
     """
     Creates an instance of LoopMetrics class
     :param metrics_iteration_function: calculator of new metrics value
     :param initial_value: start value to be initialized
     :param loop_delay_seconds: the time to wait in loop before invoke
     the ``metrics_iteration_function``. By default, equals 0.5s
+    :param start_immediately: if equals ``True`` the ``start_hook_metrics()``
+    invokes immediately
     """
 
-    return LoopMetrics(metrics_iteration_function, initial_value, loop_delay_seconds)
+    return LoopMetrics(
+        metrics_iteration_function,
+        initial_value,
+        loop_delay_seconds,
+        start_immediately
+    )
+
+
+def loop_metrics(
+        initial_value: T | None = None,
+        loop_delay_seconds: float = 0.5,
+        start_immediately: bool = False):
+    """
+    A decorator creating an instance of LoopMetrics class based on decorated function
+    as a ``metrics_iteration_function``
+    :param initial_value: start value to be initialized
+    :param loop_delay_seconds: the time to wait in loop before invoke
+    the ``metrics_iteration_function``. By default, equals 0.5s
+    :param start_immediately: if equals ``True`` the ``start_hook_metrics()``
+    invokes immediately
+
+    The returned ``LoopMetrics`` allows direct call () via ``__call__()`` the
+    magic method
+    """
+
+    def decorator(metrics_iteration_function: Callable[[], T]) -> LoopMetrics:
+        return LoopMetrics(
+            metrics_iteration_function,
+            initial_value,
+            loop_delay_seconds,
+            start_immediately
+        )
+
+    return decorator

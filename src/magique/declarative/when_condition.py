@@ -83,3 +83,22 @@ class WhenCondition:
 
         for handler in self.handlers:
             handler()
+
+    def __call__(self) -> Any:
+        """
+        Allows to invoke the condition is just a function
+        is usable if target function is decorated by
+        ``@invoke_when``
+
+        :return: handler's value if count of handlers == 1,
+        else returns a list of all handlers' values
+        """
+
+        if len(self.handlers) == 1:
+            return self.handlers[0]()
+
+        result: List[Any] = []
+        for handler in self.handlers:
+            result.append(handler())
+
+        return result

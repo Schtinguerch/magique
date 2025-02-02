@@ -29,6 +29,7 @@ class HookMetrics(Observable[T]):
             self,
             metrics_iteration_function: Callable[[], T] | None = None,
             initial_value: T | None = None,
+            start_immediately: bool = False,
             *triggers: NotifyUpdated):
 
         super().__init__(initial_value)
@@ -38,6 +39,9 @@ class HookMetrics(Observable[T]):
 
         if metrics_iteration_function is not None:
             self.metrics_iteration: Callable[[], T] = metrics_iteration_function
+
+        if start_immediately:
+            self.start_metrics_hooks()
 
     def start_metrics_hooks(self) -> None:
         """
@@ -77,17 +81,45 @@ class HookMetrics(Observable[T]):
         """
         pass
 
+    def __call__(self) -> T:
+        return self.metrics_iteration()
+
 
 def hook_obs(
-        metrics_iteration_function: Callable[[], T] | None = None,
+        *triggers: NotifyUpdated,
+        metrics_function: Callable[[], T] | None = None,
         initial_value: T | None = None,
-        *triggers: NotifyUpdated) -> HookMetrics:
+        start_immediately: bool = False) -> HookMetrics:
     """
     Creates an instance of HookMetrics class
-    :param metrics_iteration_function: calculator of new metrics value
+    :param metrics_function: calculator of new metrics value
+    :param initial_value: start value to be initialized
+    :param triggers: NotifyUpdated instances, invokation of its ``raise_update_event()``
+    is a trigger to invoke ``metrics_iteration_function()``
+    :param start_immediately: if equals ``True`` the ``start_hook_metrics()``
+    invokes immediately
+    """
+
+    return HookMetrics(metrics_function, initial_value, start_immediately, *triggers)
+
+
+def hook_metrics(
+        *triggers: NotifyUpdated,
+        initial_value: T | None = None,
+        start_immediately: bool = False):
+    """
+    A decorator creating an instance of HookMetrics class
     :param initial_value: start value to be initialized
     :param triggers: NotifyUpdated instances, invokation of its ``raise_update_event()``
     is trigger to invoke ``metrics_iteration_function()``
+    :param start_immediately: if equals ``True`` the ``start_hook_metrics()``
+    invokes immediately
+
+    The returned ``HookMetrics`` allows direct call () via ``__call__()`` the
+    magic method
     """
 
-    return HookMetrics(metrics_iteration_function, initial_value, *triggers)
+    def decorator(metrics_iteration_function: Callable[[], T]) -> HookMetrics:
+        return HookMetrics(metrics_iteration_function, initial_value, start_immediately, *triggers)
+
+    return decorator
