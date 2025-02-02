@@ -1,4 +1,4 @@
-from typing import Callable, List, Any, Self, Dict
+from typing import Callable, List, Any, Self, Dict, Iterable
 
 
 Handler = Callable[[Any], Any]
@@ -33,6 +33,17 @@ class NotifyUpdated:
         notify_prop_updated = NotifyUpdated()
         self._property_observers[property_name] = notify_prop_updated
         return notify_prop_updated
+
+    def properties_updated(self, *property_names: str) -> List[Self]:
+        """
+        Allows start listening by multiple properties in single
+        method invoke
+        :param property_names: collection of ``str`` property names
+        :return: new ``List`` of ``NotifyUpdated`` instances calling
+        ``raise_update_event()`` when property by its name has been changed
+        """
+
+        return [self.property_updated(name) for name in property_names]
 
     def raise_update_event(self) -> None:
         """
