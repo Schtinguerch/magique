@@ -84,7 +84,10 @@ class Binding(NotifyUpdated):
             self.converter: Converter = converter
 
         if apply_immediately:
-            pass
+            if self.mode in {BindingMode.send, BindingMode.single_send, BindingMode.two_way}:
+                source.raise_update_event()
+            elif self.mode in {BindingMode.receive, BindingMode.single_receive}:
+                destination.raise_update_event()
 
     @property
     def source(self) -> NotifyUpdated: return self._source
