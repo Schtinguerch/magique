@@ -1,4 +1,4 @@
-from typing import Callable, List, Any, Self, Dict, Iterable
+from typing import Callable, List, Any, Self, Dict
 
 
 Handler = Callable[[Any], Any]
@@ -19,10 +19,15 @@ class NotifyUpdated:
     def __init__(self):
         self._observers: List[Handler] = []
         self._property_observers: Dict[str, Self] = {}
+        self._property_receivers: Dict[str, Self] = {}
+        self._property_two_way_listeners: Dict[str, Self] = {}
+
+        self.value: Any
+        self.is_sending: bool = False
 
     def property_updated(self, property_name: str) -> Self:
         """
-        Listening the specified property by its name
+        Listening the specified property values updates by its name
         :param property_name: ``str`` name of specified property
         :return: New ``NotifyUpdated`` instance calling ``raise_update_event()`` when only the property changed
         """
@@ -34,6 +39,44 @@ class NotifyUpdated:
         self._property_observers[property_name] = notify_prop_updated
         return notify_prop_updated
 
+    def property_received(self, property_name: str) -> Self:
+        """
+        Creates an ``ObservableReceiver`` for the specified property by its name
+        :param property_name: ``str`` name of specified property
+        :return: new ``ObservableReceiver`` updating property's value when receiver's ``value`` is updated
+        """
+
+        from .observable_receiver import ObservableReceiver
+
+        if property_name in self._property_receivers:
+            return self._property_receivers[property_name]
+
+        receiver = ObservableReceiver(lambda v: setattr(self, property_name, v))
+        self._property_receivers[property_name] = receiver
+        return receiver
+
+    def property(self, property_name: str) -> Self:
+        """
+        It's a two-way property listener. Allows catch updates of property updates and updating
+        property when its receiver got new value
+
+        Contains property's ``property_updated()`` and ``property_received()`` instances
+        by its name
+
+        :param property_name: property_name: ``str`` name of specified property
+        :return: new ``PropertyListener`` instance for two-way property listening
+        """
+
+        from .property_listener import PropertyListener
+
+        if property_name in self._property_two_way_listeners:
+            return self._property_two_way_listeners[property_name]
+
+        # noinspection PyTypeChecker
+        listener = PropertyListener(self.property_updated(property_name), self.property_received(property_name))
+        self._property_two_way_listeners[property_name] = listener
+        return listener
+
     def properties_updated(self, *property_names: str) -> List[Self]:
         """
         Allows start listening by multiple properties in single
@@ -44,6 +87,28 @@ class NotifyUpdated:
         """
 
         return [self.property_updated(name) for name in property_names]
+
+    def properties_received(self, *property_names: str) -> List[Self]:
+        """
+        Creates multiple ``ObservableReceiver`` instances for the specified properties
+        by its name. Its updates, triggers specified properties updates
+
+        :param property_names: collection of ``str`` property names
+        :return: new ``List`` of ``ObservableReceiver`` updating property's
+        value when receiver's ``value`` is updated
+        """
+
+        return [self.property_received(name) for name in property_names]
+
+    def properties(self, *property_names: str) -> List[Self]:
+        """
+        Creates multiple ``PropertyListener`` instances in a single method. Every instance
+        is a two-way property listener containing property's ``property_updated()``
+        and ``property_received()`` instances by its name
+
+        :param property_names: collection of ``str`` property names
+        :return: new ``List`` of ``PropertyListener`` instances for two-way property listening
+        """
 
     def raise_update_event(self) -> None:
         """
@@ -101,6 +166,7 @@ class NotifyUpdated:
             return False
 
         notify_prop_updated: Self = self._property_observers[property_name]
+        notify_prop_updated.value = b
         if notify_prop_updated.raise_update_if_values_diff(a, b):
             self.raise_update_event()
             return True
