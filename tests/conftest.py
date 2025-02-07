@@ -1,6 +1,6 @@
 import pytest
 from typing import List, Callable, Any, Dict
-from src.magique.declarative import Observable, ObservableList, ObservableDict
+from src.magique.declarative import Observable, ObservableList, ObservableDict, Converter
 
 
 @pytest.fixture()
@@ -8,6 +8,18 @@ def observable_int() -> Observable[int]:
     observable: Observable[int] = Observable(100)
     yield observable
     observable.detach_all_handlers()
+
+
+@pytest.fixture()
+def observable_str() -> Observable[str]:
+    observable: Observable[str] = Observable("500")
+    yield observable
+    observable.detach_all_handlers()
+
+
+@pytest.fixture(scope="session")
+def int_str_converter() -> Converter:
+    return Converter(str, int)
 
 
 @pytest.fixture()
