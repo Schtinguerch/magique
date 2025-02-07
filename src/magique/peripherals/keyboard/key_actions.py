@@ -40,7 +40,7 @@ _one_of_keys_held: MagiqueKey | None = None
 def hold(*keys: MagiqueKey) -> None:
     """
     Presses and holds specified keys by order
-    :param keys: keys need to be holded, supports ``OneOfKeys``, ``AnyKey``, ``CrossPlatformKey``
+    :param keys: keys need to be held, supports ``OneOfKeys``, ``AnyKey``, ``CrossPlatformKey``
     """
 
     for key in keys:
