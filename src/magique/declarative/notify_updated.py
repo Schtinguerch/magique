@@ -36,6 +36,7 @@ class NotifyUpdated:
             return self._property_observers[property_name]
 
         notify_prop_updated = NotifyUpdated()
+        notify_prop_updated.value = getattr(self, property_name)
         self._property_observers[property_name] = notify_prop_updated
         return notify_prop_updated
 
@@ -51,7 +52,7 @@ class NotifyUpdated:
         if property_name in self._property_receivers:
             return self._property_receivers[property_name]
 
-        receiver = ObservableReceiver(lambda v: setattr(self, property_name, v))
+        receiver = ObservableReceiver(lambda v: setattr(self, property_name, v), getattr(self, property_name))
         self._property_receivers[property_name] = receiver
         return receiver
 
