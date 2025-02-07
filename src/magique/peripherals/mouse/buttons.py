@@ -1,9 +1,11 @@
 from typing import Final, List, Dict
 from .button import MagiqueMouseButton, OneOfMouseButtons, AnyMouseButton
 from .cursor import MagiqueCursor
+from .wheel import MagiqueWheel
 
 
 Cursor: Final[MagiqueCursor] = MagiqueCursor()
+Wheel: Final[MagiqueWheel] = MagiqueWheel()
 
 Left: Final[MagiqueMouseButton] = MagiqueMouseButton("left")
 Right: Final[MagiqueMouseButton] = MagiqueMouseButton("right")

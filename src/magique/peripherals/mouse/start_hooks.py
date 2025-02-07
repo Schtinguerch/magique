@@ -1,5 +1,7 @@
+from time import time
 from typing import List, Literal
-from . import MagiqueMouseButton, OneOfMouseButtons, str_button_dict, Any, Cursor
+
+from . import MagiqueMouseButton, OneOfMouseButtons, str_button_dict, Any, Cursor, Wheel
 from ..monitors import monitor_setup, auto_init_monitor_setup, MonitorInfo, MonitorSetup
 
 from mouse import hook, ButtonEvent, MoveEvent, WheelEvent
@@ -33,8 +35,13 @@ def on_move_event(event: MoveEvent):
 
 
 def on_wheel_event(event: WheelEvent):
-    #raise NotImplementedError()
-    pass
+    timestamp: float = float(time())
+    if timestamp - Wheel.last_wheel_timestamp < 0.5:
+        Wheel.delta += event.delta
+    else:
+        Wheel.delta = event.delta
+
+    Wheel.last_wheel_timestamp = timestamp
 
 
 def on_any_button(event: ButtonEvent | MoveEvent | WheelEvent) -> None:
