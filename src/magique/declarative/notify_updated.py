@@ -25,6 +25,9 @@ class NotifyUpdated:
         self.value: Any
         self.is_sending: bool = False
 
+    def __repr__(self) -> str:
+        return f"<NotifyUpdated: observers_len={len(self._observers)}, _value={self.value}>"
+
     def property_updated(self, property_name: str) -> Self:
         """
         Listening the specified property values updates by its name

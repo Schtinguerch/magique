@@ -17,6 +17,12 @@ class Observable(Generic[T], NotifyUpdated):
         self._value = initial_value
         self._observers: List[Callable[[T], Any]] = []
 
+    def __str__(self) -> str:
+        return f"obs({self._value.__str__()})"
+
+    def __repr__(self) -> str:
+        return f"<obs: value={self._value.__repr__()}; observers_len={len(self._observers)}>"
+
     @property
     def value(self) -> T:
         return self._value

@@ -89,6 +89,15 @@ class Binding(NotifyUpdated):
             elif self.mode in {BindingMode.receive, BindingMode.single_receive}:
                 destination.raise_update_event()
 
+    def __repr__(self) -> str:
+        return (
+            f"<binding: mode={self._mode.name}; "
+            f"between {self._source.__repr__()} AND {self._destination.__repr__()}>"
+        )
+
+    def __str__(self) -> str:
+        return f"binding(mode={self._mode.name})"
+
     @property
     def source(self) -> NotifyUpdated: return self._source
 
