@@ -1,4 +1,4 @@
-from mouse import get_position
+from mouse import get_position, move
 
 from ...declarative import NotifyUpdated, notify_property_updated
 
@@ -7,6 +7,9 @@ class MagiqueCursor(NotifyUpdated):
     def __init__(self):
         super().__init__()
         x, y = get_position()
+
+        # used by hook to prevent looping
+        self._move_cursor_on_property_set: bool = True
 
         # that fields are updated automatically by general mouse hook
         self._x: int = x
@@ -20,14 +23,18 @@ class MagiqueCursor(NotifyUpdated):
 
     @x.setter
     @notify_property_updated(lambda self: self._x)
-    def x(self, new_x: int): self._x = new_x
+    def x(self, new_x: int):
+        if self._move_cursor_on_property_set: move(new_x, self.y)
+        self._x = new_x
 
     @property
     def y(self) -> int: return self._y
 
     @y.setter
     @notify_property_updated(lambda self: self._y)
-    def y(self, new_y: int): self._y = new_y
+    def y(self, new_y: int):
+        if self._move_cursor_on_property_set: move(self.x, new_y)
+        self._y = new_y
 
     @property
     def monitor_id(self) -> int: return self._monitor_id
