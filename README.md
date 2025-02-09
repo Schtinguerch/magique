@@ -2,7 +2,7 @@
 
 # magique.py
 
-That's my expirement, being in development from my personal programming language called MagiqueScript
+That's my experiment, being in development from my personal programming language called MagiqueScript
 with some features, I'm going to implement there
 
 1. Declarative constructions. Most of UI Automation tools are strictly imperative. The special tools like `when()`
