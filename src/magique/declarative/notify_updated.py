@@ -22,11 +22,13 @@ class NotifyUpdated:
         self._property_receivers: Dict[str, Self] = {}
         self._property_two_way_listeners: Dict[str, Self] = {}
 
-        self.value: Any
+        if not hasattr(self, "value"):
+            self.value: Any = None
+
         self.is_sending: bool = False
 
     def __repr__(self) -> str:
-        return f"<NotifyUpdated: observers_len={len(self._observers)}, _value={self.value}>"
+        return f"<NotifyUpdated: observers_len={len(self._observers)}, value={self.value}>"
 
     def property_updated(self, property_name: str) -> Self:
         """
@@ -224,24 +226,27 @@ class NotifyUpdated:
         return self
 
 
-def notify_property_updated(get_value_function: Callable[[NotifyUpdated], Any]) -> Callable:
+def notify_property_updated(
+        get_value_function: Callable[[NotifyUpdated], Any],
+        property_name: str | None = None) -> Callable:
     """
     Decorator for class methods (NotifyUpdated and its child classes), allows
     automatically notify if property is updated, invoking
     ``raise_property_update_if_values_diff()``
 
     :param get_value_function: invoke value getter, to check the value before
+    :param property_name: change updating property name, if method name doesn't same to property name
     and after decorated method invokation
     """
 
     def decorator(target_function: Callable) -> Callable:
-        def wrapper(self, *args, **kwargs):
-            property_name: str = target_function.__name__
+        final_property_name: str = property_name or target_function.__name__
 
+        def wrapper(self, *args, **kwargs):
             old_value: Any = get_value_function(self)
             target_function(self, *args, **kwargs)
 
             new_value: Any = get_value_function(self)
-            self.raise_property_update_if_values_diff(property_name, old_value, new_value)
+            self.raise_property_update_if_values_diff(final_property_name, old_value, new_value)
         return wrapper
     return decorator
