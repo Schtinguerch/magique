@@ -23,6 +23,9 @@ class Observable(Generic[T], NotifyUpdated):
     def __repr__(self) -> str:
         return f"<obs: value={self._value.__repr__()}; observers_len={len(self._observers)}>"
 
+    def __lshift__(self, other: T):
+        self.value = other
+
     @property
     def value(self) -> T:
         return self._value
