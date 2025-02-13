@@ -8,6 +8,7 @@ based on following classes
 
 
 from .notify_updated import NotifyUpdated, notify_property_updated
+from .notify_properties_dataclass import notify_property_dataclass
 from .observable import Observable, obs
 from .observable_receiver import ObservableReceiver
 from .property_listener import PropertyListener
