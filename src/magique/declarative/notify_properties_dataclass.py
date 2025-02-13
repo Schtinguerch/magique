@@ -26,6 +26,16 @@ def add_property(cls, self, attribute: str, source: Tuple | Dict | None = None):
 
 
 def notify_property_dataclass(cls):
+    """
+    Recreates the class as inherited from ``NotifyUpdated`` if that class
+    is not used as a parent class
+
+    Adds dunder properties on the fields defined in that class. Every
+    property setter, uses ``@notify_property_updated()`` by field name
+
+    :param cls: target class to be decorated
+    """
+
     cls_annotations: Dict[str, Type] = cls.__annotations__
     if cls.__mro__[1] != NotifyUpdated:
         cls = type(cls.__name__, (NotifyUpdated,), dict(cls.__dict__))
