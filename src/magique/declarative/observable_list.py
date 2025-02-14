@@ -3,6 +3,7 @@ from .observable import Observable
 
 
 T = TypeVar('T')
+_sentinel: Any = object()
 
 
 class ObservableList(Observable[List], Generic[T]):
@@ -15,8 +16,8 @@ class ObservableList(Observable[List], Generic[T]):
     The argument must be an iterable if specified
     """
 
-    def __init__(self, initial_iterable: Iterable[T] | None = None):
-        if initial_iterable is None:
+    def __init__(self, initial_iterable: Iterable[T] = _sentinel):
+        if initial_iterable is _sentinel:
             self._initializer_list = []
         elif isinstance(initial_iterable, list):
             self._initializer_list = initial_iterable
@@ -90,7 +91,7 @@ class ObservableList(Observable[List], Generic[T]):
         return repr(self._value)
 
 
-def ol(initial_iterable: Iterable[T] | None = None) -> ObservableList[T]:
+def ol(initial_iterable: Iterable[T] = _sentinel) -> ObservableList[T]:
     """
     Creates a new instance of ``ObservableList`` from any ``Iterable`` object
     """

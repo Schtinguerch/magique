@@ -1,8 +1,11 @@
-from typing import Tuple, Dict, Type
+from typing import Tuple, Dict, Type, Any
 from .notify_updated import NotifyUpdated, notify_property_updated
 
 
-def add_property(cls, self, attribute: str, source: Tuple | Dict | None = None):
+_sentinel: Any = object()
+
+
+def add_property(cls, self, attribute: str, source: Tuple | Dict = _sentinel):
     private_attribute: str = f"_{attribute}"
 
     def get_attribute(self):

@@ -5,6 +5,7 @@ from queue import Queue
 
 
 T = TypeVar('T')
+_sentinel: Any = object()
 
 
 class HookMetrics(Observable[T]):
@@ -27,7 +28,7 @@ class HookMetrics(Observable[T]):
 
     def __init__(
             self,
-            metrics_iteration_function: Callable[[], T] | None = None,
+            metrics_iteration_function: Callable[[], T] = _sentinel,
             initial_value: T | None = None,
             start_immediately: bool = False,
             *triggers: NotifyUpdated):
@@ -37,7 +38,7 @@ class HookMetrics(Observable[T]):
         self.listening: bool = False
         self.triggers: List[NotifyUpdated] = list(triggers)
 
-        if metrics_iteration_function is not None:
+        if metrics_iteration_function is not _sentinel:
             self.metrics_iteration: Callable[[], T] = metrics_iteration_function
 
         if start_immediately:

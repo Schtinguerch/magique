@@ -7,6 +7,7 @@ from queue import Queue
 
 
 T = TypeVar('T')
+_sentinel: Any = object()
 
 
 class LoopMetrics(Observable[T]):
@@ -36,7 +37,7 @@ class LoopMetrics(Observable[T]):
 
     def __init__(
             self,
-            metrics_iteration_function: Callable[[], T] | None = None,
+            metrics_iteration_function: Callable[[], T] = _sentinel,
             initial_value: T | None = None,
             loop_delay_seconds: float = 0.5,
             start_immediately: bool = False):
@@ -48,7 +49,7 @@ class LoopMetrics(Observable[T]):
         self.listening_thread, self.handling_thread = self.reinitialize_threads()
         self.terminate_queue_value: Any = None
 
-        if metrics_iteration_function is not None:
+        if metrics_iteration_function is not _sentinel:
             self.metrics_iteration: Callable[[], T] = metrics_iteration_function
 
         if start_immediately:

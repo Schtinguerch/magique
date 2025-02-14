@@ -6,6 +6,7 @@ from .notify_updated import NotifyUpdated, notify_property_updated
 
 
 FunctionPair = Tuple[Callable[[Any], Any], Callable[[Any], Any]]
+_sentinel: Any = object()
 
 
 @dataclass
@@ -65,7 +66,7 @@ class Binding(NotifyUpdated):
             source: NotifyUpdated,
             destination: NotifyUpdated,
             mode: BindingMode = BindingMode.send,
-            converter: Converter | FunctionPair | None = None,
+            converter: Converter | FunctionPair = _sentinel,
             apply_immediately: bool = False):
 
         super().__init__()
@@ -76,7 +77,7 @@ class Binding(NotifyUpdated):
         self._mode: BindingMode = mode
         self._enable_mode(mode)
 
-        if converter is None:
+        if converter is _sentinel:
             self.converter = Converter(lambda x: x, lambda x: x)
         elif isinstance(converter, Tuple):
             self.converter = Converter(*converter)

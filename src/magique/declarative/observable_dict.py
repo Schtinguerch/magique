@@ -4,6 +4,7 @@ from .observable import Observable
 
 K = TypeVar("K")
 V = TypeVar("V")
+_sentinel: Any = object()
 
 
 class ObservableDict(Observable[Dict], Generic[K, V]):
@@ -16,8 +17,8 @@ class ObservableDict(Observable[Dict], Generic[K, V]):
     The argument must be an iterable if specified
     """
 
-    def __init__(self, initial_dict: Dict | Iterable | zip | None = None, **kwargs: Dict[Any, Any]):
-        if initial_dict is None:
+    def __init__(self, initial_dict: Dict | Iterable | zip = _sentinel, **kwargs: Dict[Any, Any]):
+        if initial_dict is _sentinel:
             self._target_dict = {}
         elif isinstance(initial_dict, zip):
             self._target_dict = dict(initial_dict)
@@ -59,7 +60,7 @@ class ObservableDict(Observable[Dict], Generic[K, V]):
         return repr(self._value)
 
 
-def od(initial_dict: Dict | zip | Iterable | None = None) -> ObservableDict:
+def od(initial_dict: Dict | zip | Iterable = _sentinel) -> ObservableDict:
     """
     Creates a new instance of ``ObservableDict`` from another dictionary,
     or zip object, or another iterable[key, value]
@@ -68,4 +69,4 @@ def od(initial_dict: Dict | zip | Iterable | None = None) -> ObservableDict:
     return ObservableDict(initial_dict)
 
 
-odict: Callable[[Dict | zip | None], ObservableDict] = od
+odict: Callable[[Dict | zip | Iterable], ObservableDict] = od
