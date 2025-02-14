@@ -23,6 +23,7 @@ class NotifyUpdated:
         self._property_two_way_listeners: Dict[str, Self] = {}
 
         if not hasattr(self, "value"):
+            self._value: Any = None
             self.value: Any = None
 
         self.is_sending: bool = False
